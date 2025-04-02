@@ -1,0 +1,18 @@
+int n
+int frt
+int sec
+int third
+int res
+n = 18
+frt = 1
+sec = 1
+third = frt + sec
+n = n - 3
+while(n){
+    frt = sec
+    sec = third
+    third = frt + sec
+    n = n - 1
+}
+res = third
+print(res)

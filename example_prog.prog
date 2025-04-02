@@ -1,0 +1,21 @@
+int a
+a = 5
+print(a)
+int b
+b = 7
+print(b)
+a = a + b
+if(a){
+int c
+c = 4
+print(c)
+print(a)
+}
+a = 0
+print(a)
+if(a){
+print(a)
+}
+else{
+    print(b)
+}
