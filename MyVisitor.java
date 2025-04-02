@@ -31,6 +31,9 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
             default:
                 break;
         }
+        // System.out.println("Type is: " + var.getType());
+        // System.out.println("FloatValue is: " + var.getFloatNumber());
+        // System.out.println("IntValue is: " + var.getIntNumber());
         return var;
     }
     /** print_statment: 'print' '(' expr ')' NEWLINE */
@@ -165,6 +168,8 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
         Variable constVar = new Variable("float");
         constVar.setConst(true);
         constVar.setValue(Float.valueOf(ctx.FLOAT().getText()));
+        // System.out.println("float value: " + constVar.getFloatNumber());
+        // System.out.println("Type value: " + constVar.getType());
         return constVar;
     }
 
@@ -186,6 +191,7 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
 	@Override public Variable visitDeclareSt(MyGramParser.DeclareStContext ctx) {
         String id = ctx.ID().getText();
         Variable var = visit(ctx.type());
+        // System.out.println("(declare)Type is: " + var.getType());
         memory.put(id, var);
         return null;
     }
@@ -194,6 +200,7 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
      */
     @Override public Variable visitTypeInt(MyGramParser.TypeIntContext ctx){
         String type = ctx.TINT().getText();
+        // System.out.println("(int)Type is: " + type);
         return new Variable(type);
     }
     /**
@@ -201,7 +208,9 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
      */
     @Override public Variable visitTypeFloat(MyGramParser.TypeFloatContext ctx){
         String type = ctx.TFLOAT().getText();
+        // System.out.println("(float)Type is: " + type);
         return new Variable(type);
+
     }
 
 
@@ -244,10 +253,6 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
                 return null;
         }
     }
-
-
-
-
     /**
      * WHILE section
      * 

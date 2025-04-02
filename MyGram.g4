@@ -44,8 +44,8 @@ while_statment
                 ;
 
 
-INT     :       '-'?[0-9]+ ;
 FLOAT   :       '-'?[0-9]+'.'[0-9]+;
+INT     :       '-'?[0-9]+ ;
 MUL     :       '*';
 DIV     :       '/';
 ADD     :       '+';
@@ -59,6 +59,6 @@ WHILE   :     'while';
 TINT    :      'int';
 TFLOAT  :    'float';
 
-ID      :       [a-zA-Z]+[a-zA-Z0-9_]? ;
+ID      :   [a-zA-Z]+[a-zA-Z0-9_]? ;
 NEWLINE :   '\r'? '\n' ;
 WS      :   [ \t]+ -> skip;

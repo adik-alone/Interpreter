@@ -1,0 +1,12 @@
+float f
+f = 2.0
+print(f)
+float d
+d = 2.13
+print(d)
+print(d + f)
+print(d * f)
+print(d)
+print(f)
+print(d - f)
+print(d / f)
