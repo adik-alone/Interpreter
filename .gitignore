@@ -1,0 +1,6 @@
+*.class
+MyGram*.java
+MyGram.interp
+MyGram.tokens
+MyGramLexer.interp
+MyGramLexer.tokens
