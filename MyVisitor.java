@@ -1,9 +1,11 @@
 import java.util.HashMap;
 import java.util.Map;
 
-public class MyVisitor extends MyGramBaseVisitor<Integer> {
+import cls.*;
 
-    Map<String, Integer> memory = new HashMap<String, Integer>();
+public class MyVisitor extends MyGramBaseVisitor<Variable> {
+
+    Map<String, Variable> memory = new HashMap<String, Variable>();
 	/**
 	 * {@inheritDoc}
 	 *
@@ -13,98 +15,265 @@ public class MyVisitor extends MyGramBaseVisitor<Integer> {
 	// @Override public T visitCalcExpr(MyGramParser.CalcExprContext ctx) { return visitChildren(ctx); }
 
     /** ID '=' expr NEWLINE */
-	@Override public Integer visitAssign(MyGramParser.AssignContext ctx) {
+	@Override public Variable visitAssign(MyGramParser.AssignContext ctx) {
         String id = ctx.ID().getText();
-        int value = visit(ctx.expr());
-        // memory.put(id, value);
-        if (memory.containsKey(id)){
-            memory.remove(id);
-            memory.put(id, value);
+        Variable var;
+        if (memory.containsKey(id)) var = memory.get(id);
+        else return null;
+        Variable value = visit(ctx.expr());
+        switch (value.getType()){
+            case "int":
+                var.setValue(value.getIntNumber());
+                break;
+            case "float":
+                var.setValue(value.getFloatNumber());
+                break;
+            default:
+                break;
         }
-        return value;
+        return var;
     }
     /** print_statment: 'print' '(' expr ')' NEWLINE */
-	@Override public Integer visitPrint_statment(MyGramParser.Print_statmentContext ctx) {
-        Integer value = visit(ctx.expr());
-        System.out.println(value);
-        return 0;
+	@Override public Variable visitPrint_statment(MyGramParser.Print_statmentContext ctx) {
+        Variable value = visit(ctx.expr());
+        switch (value.getType()){
+            case "int":
+                System.out.println(value.getIntNumber());
+                break;
+            case "float":
+                System.out.println(value.getFloatNumber());
+                break;
+            default:
+                System.out.println("Bad type");
+        }
+        return null;
     }
     /** '-' expr */
-	@Override public Integer visitNeg(MyGramParser.NegContext ctx) {
-        Integer value = -1 * visit(ctx.expr());
-        return value;
+	@Override public Variable visitNeg(MyGramParser.NegContext ctx) {
+        Variable var = visit(ctx.expr());
+        switch(var.getType()){
+            case "int":
+                var.setValue(-1 * var.getIntNumber());
+                break;
+            case "float":
+                var.setValue(-1 * var.getFloatNumber());
+                break;
+            default:
+                break;
+        }
+        return var;
     }
     /**
      * '(' expr ')'
      */
-	@Override public Integer visitParens(MyGramParser.ParensContext ctx) {
+	@Override public Variable visitParens(MyGramParser.ParensContext ctx) {
         return visit(ctx.expr());
     }
 	/**
      * expr op=('*'|'/') expr
 	 */
-	@Override public Integer visitMulDiv(MyGramParser.MulDivContext ctx) {
-        Integer left = visit(ctx.expr(0));
-        Integer right = visit(ctx.expr(1));
-        if (ctx.op.getType() == MyGramParser.MUL) return left * right;
-        return left / right;
+	@Override public Variable visitMulDiv(MyGramParser.MulDivContext ctx) {
+        Variable left = visit(ctx.expr(0));
+        Variable right = visit(ctx.expr(1));
+        if (!left.getType().equals(right.getType())) return null;
+        Variable result = new Variable(left.getType());
+        if (ctx.op.getType() == MyGramParser.MUL){ 
+            switch(left.getType()){
+                case "int":
+                    result.setValue(left.getIntNumber() * right.getIntNumber());
+                    break;
+                case "float":
+                    result.setValue(left.getFloatNumber() * right.getFloatNumber());
+                    break;
+                default:
+                    result = null;
+                    break;
+            }
+        }else{
+            switch(left.getType()){
+                case "int":
+                    result.setValue(left.getIntNumber() / right.getIntNumber());
+                    break;
+                case "float":
+                    result.setValue(left.getFloatNumber() / right.getFloatNumber());
+                    break;
+                default:
+                    result = null;
+                    break;
+            }
+
+        }
+        return result;
     }
 	/**
      * expr op=('+'|'-') expr
 	 */
-	@Override public Integer visitAddSub(MyGramParser.AddSubContext ctx) {
-        Integer left = visit(ctx.expr(0));
-        Integer right = visit(ctx.expr(1));
-        if (ctx.op.getType() == MyGramParser.ADD) return left + right;
-        return left - right;
+	@Override public Variable visitAddSub(MyGramParser.AddSubContext ctx) {
+        Variable left = visit(ctx.expr(0));
+        Variable right = visit(ctx.expr(1));
+        if (!left.getType().equals(right.getType())) return null;
+        Variable result = new Variable(left.getType());
+        if (ctx.op.getType() == MyGramParser.ADD){ 
+            switch(left.getType()){
+                case "int":
+                    result.setValue(left.getIntNumber() + right.getIntNumber());
+                    break;
+                case "float":
+                    result.setValue(left.getFloatNumber() + right.getFloatNumber());
+                    break;
+                default:
+                    result = null;
+                    break;
+            }
+        }else{
+            switch(left.getType()){
+                case "int":
+                    result.setValue(left.getIntNumber() - right.getIntNumber());
+                    break;
+                case "float":
+                    result.setValue(left.getFloatNumber() - right.getFloatNumber());
+                    break;
+                default:
+                    result = null;
+                    break;
+            }
+
+        }
+        return result;
     }
 	/**
      * ID
 	 */
-	@Override public Integer visitId(MyGramParser.IdContext ctx) {
+	@Override public Variable visitId(MyGramParser.IdContext ctx) {
         String id = ctx.ID().getText();
         if (memory.containsKey(id)) return memory.get(id);
-        return 0;
+        return null;
     }
 	/**
      * INT
 	 */
-	@Override public Integer visitInt(MyGramParser.IntContext ctx) {
-        return Integer.valueOf(ctx.INT().getText());
+	@Override public Variable visitInt(MyGramParser.IntContext ctx) {
+        Variable constVar = new Variable("int");
+        constVar.setConst(true);
+        constVar.setValue(Integer.valueOf(ctx.INT().getText()));
+        return constVar;
     }
 	/**
-     * 'int' ID
+     * FLOAT
 	 */
-	@Override public Integer visitType(MyGramParser.TypeContext ctx) {
-        String id = ctx.ID().getText();
-        memory.put(id, 0);
-        return 0;
+	@Override public Variable visitFloat(MyGramParser.FloatContext ctx) {
+        Variable constVar = new Variable("float");
+        constVar.setConst(true);
+        constVar.setValue(Float.valueOf(ctx.FLOAT().getText()));
+        return constVar;
     }
+
+
+    /**
+     * Declare section
+     * TINT
+     * TFLOAT
+     * 
+     * 
+     * 
+     * 
+     */
+
+
+	/**
+     * type ID NEWLINE
+	 */
+	@Override public Variable visitDeclareSt(MyGramParser.DeclareStContext ctx) {
+        String id = ctx.ID().getText();
+        Variable var = visit(ctx.type());
+        memory.put(id, var);
+        return null;
+    }
+    /**
+     * TINT
+     */
+    @Override public Variable visitTypeInt(MyGramParser.TypeIntContext ctx){
+        String type = ctx.TINT().getText();
+        return new Variable(type);
+    }
+    /**
+     * IFLOAT
+     */
+    @Override public Variable visitTypeFloat(MyGramParser.TypeFloatContext ctx){
+        String type = ctx.TFLOAT().getText();
+        return new Variable(type);
+    }
+
+
+    /**
+     * IF section
+     * 
+     * 
+     */
+
+
 	/**
      * 'if' '(' expr ')' '{' statments '}' NEWLINE
 	 */
-	@Override public Integer visitIfSt(MyGramParser.IfStContext ctx) {
-        Integer value = visit(ctx.expr());
-        if (value != 0) return visit(ctx.statments()); //?
-        return 0;
+	@Override public Variable visitIfSt(MyGramParser.IfStContext ctx) {
+        Variable condition = visit(ctx.expr());
+        switch(condition.getType()){
+            case "int":
+                if (condition.getIntNumber() != 0) return visit(ctx.statments()); //?
+                return null;
+            case "float":
+                if (condition.getFloatNumber() != 0) return visit(ctx.statments()); //?
+                return null;
+            default:
+                return null;
+        }
     }
 	/**
      * 'if' '(' expr ')' '{' statments '}' (NEWLINE)? 'else' '{' statments '}'
 	 */
-	@Override public Integer visitIfElSt(MyGramParser.IfElStContext ctx) { 
-        Integer value = visit(ctx.expr());
-        if (value != 0) return visit(ctx.statments(0));
-        return visit(ctx.statments(1));
+	@Override public Variable visitIfElSt(MyGramParser.IfElStContext ctx) { 
+        Variable condition = visit(ctx.expr());
+        switch(condition.getType()){
+            case "int":
+                if (condition.getIntNumber() != 0) return visit(ctx.statments(0)); //?
+                return visit(ctx.statments(1));
+            case "float":
+                if (condition.getFloatNumber() != 0) return visit(ctx.statments(0)); //?
+                return visit(ctx.statments(1));
+            default:
+                return null;
+        }
     }
+
+
+
+
+    /**
+     * WHILE section
+     * 
+     */
 	/**
      * 'while' '(' expr ')' '{' statments '}'
 	 */
-	@Override public Integer visitWhileSt(MyGramParser.WhileStContext ctx) {
-        Integer value = visit(ctx.expr());
-        if (value != 0){
-            visit(ctx.statments());
-        }else{
-            return 0;
+	@Override public Variable visitWhileSt(MyGramParser.WhileStContext ctx) {
+        Variable value = visit(ctx.expr());
+        switch(value.getType()){
+            case "int":
+                if (value.getIntNumber() != 0){
+                    visit(ctx.statments());
+                }else{
+                    return null;
+                }
+                break;
+            case "float":
+                if (value.getFloatNumber() != 0){
+                    visit(ctx.statments());
+                }else{
+                    return null;
+                }
+                break;
+            default:
+                break;
         }
         return visitWhileSt(ctx);
     }
