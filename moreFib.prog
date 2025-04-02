@@ -1,0 +1,26 @@
+int n
+int frt
+int i
+int sec
+int third
+int res
+int flag
+i = 3
+flag = 1
+n = 190
+frt = 1
+sec = 1
+third = frt + sec
+while(flag){
+    frt = sec
+    sec = third
+    third = frt + sec
+    if (third > n){
+        flag = 0
+    }else{
+        i = i + 1
+    }
+}
+res = third
+print(res)
+print(i)
