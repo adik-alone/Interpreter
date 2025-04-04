@@ -6,13 +6,6 @@ import cls.*;
 public class MyVisitor extends MyGramBaseVisitor<Variable> {
 
     Map<String, Variable> memory = new HashMap<String, Variable>();
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	// @Override public T visitCalcExpr(MyGramParser.CalcExprContext ctx) { return visitChildren(ctx); }
 
     /** ID '=' expr NEWLINE */
 	@Override public Variable visitAssign(MyGramParser.AssignContext ctx) {
@@ -171,6 +164,102 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
         // System.out.println("float value: " + constVar.getFloatNumber());
         // System.out.println("Type value: " + constVar.getType());
         return constVar;
+    }
+
+    /**
+     * expr op=('>'|'<') expr
+     */
+    @Override public Variable visitMoreLess(MyGramParser.MoreLessContext ctx){
+        Variable left = visit(ctx.expr(0));
+        Variable right = visit(ctx.expr(1));
+        if(!left.getType().equals(right.getType())) return null;
+        Variable result = new Variable(left.getType());
+        if (ctx.op.getType() == MyGramParser.MORES){ 
+            switch(left.getType()){
+                case "int":
+                    if (left.getIntNumber() > right.getIntNumber())
+                        result.setValue(1);
+                    else
+                        result.setValue(0);
+                    break;
+                case "float":
+                    if (left.getFloatNumber() > right.getFloatNumber())
+                        result.setValue(1f);
+                    else
+                        result.setValue(0f);
+                    break;
+                default:
+                    result = null;
+                    break;
+            }
+        }else{
+            switch(left.getType()){
+                case "int":
+                    if (left.getIntNumber() < right.getIntNumber())
+                        result.setValue(1);
+                    else
+                        result.setValue(0);
+                    break;
+                case "float":
+                    if (left.getFloatNumber() < right.getFloatNumber())
+                        result.setValue(1f);
+                    else
+                        result.setValue(0f);
+                    break;
+                default:
+                    result = null;
+                    break;
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * expr op=('=='|'!=') expr
+     */
+    @Override public Variable visitEquN(MyGramParser.EquNContext ctx){
+        Variable left = visit(ctx.expr(0));
+        Variable right = visit(ctx.expr(1));
+        if(!left.getType().equals(right.getType())) return null;
+        Variable result = new Variable(left.getType());
+        if (ctx.op.getType() == MyGramParser.EQU){ 
+            switch(left.getType()){
+                case "int":
+                    if (left.getIntNumber() == right.getIntNumber())
+                        result.setValue(1);
+                    else
+                        result.setValue(0);
+                    break;
+                case "float":
+                    if (left.getFloatNumber() == right.getFloatNumber())
+                        result.setValue(1f);
+                    else
+                        result.setValue(0f);
+                    break;
+                default:
+                    result = null;
+                    break;
+            }
+        }else{
+            switch(left.getType()){
+                case "int":
+                    if (left.getIntNumber() != right.getIntNumber())
+                        result.setValue(1);
+                    else
+                        result.setValue(0);
+                    break;
+                case "float":
+                    if (left.getFloatNumber() != right.getFloatNumber())
+                        result.setValue(1f);
+                    else
+                        result.setValue(0f);
+                    break;
+                default:
+                    result = null;
+                    break;
+            }
+        }
+        return result;
     }
 
 

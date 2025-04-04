@@ -4,23 +4,21 @@ int i
 int sec
 int third
 int res
-int flag
 i = 3
-flag = 1
-n = 190
+n = 53678
+n = 233
 frt = 1
 sec = 1
 third = frt + sec
-while(flag){
+while(third < n){
     frt = sec
     sec = third
     third = frt + sec
-    if (third > n){
-        flag = 0
-    }else{
-        i = i + 1
-    }
+    i = i + 1
 }
 res = third
+if(res == n){
+    print(0)
+}
 print(res)
 print(i)

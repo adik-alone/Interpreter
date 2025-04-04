@@ -23,6 +23,8 @@ expr
     | INT                       # int
     | FLOAT                     # float
     | '(' expr ')'              # parens
+    | expr op=('>'|'<') expr    # MoreLess
+    | expr op=('=='|'!=') expr  # EquN
     ;
 
 declare_statment
@@ -35,8 +37,8 @@ type
     ;
 
 if_statment
-            : IF '(' expr ')' '{' statments '}' NEWLINE                                        # IfSt
-            | IF '(' expr ')' '{' statments '}' (NEWLINE)? ELSE '{' statments '}' NEWLINE    # IfElSt
+            : IF '(' expr ')' '{' statments '}' (NEWLINE)? ELSE '{' statments '}' NEWLINE    # IfElSt
+            | IF '(' expr ')' '{' statments '}' NEWLINE                                        # IfSt
             ;
 
 while_statment 
@@ -50,6 +52,13 @@ MUL     :       '*';
 DIV     :       '/';
 ADD     :       '+';
 SUB     :       '-';
+MORES   :       '>';
+LESS    :       '<';
+EQU     :       '==';
+NEQU    :       '!=';
+NOT     :       '~';
+AND     :       '&';
+OR      :       '|';
 
 PRINT   :     'print';
 IF      :        'if';
@@ -59,6 +68,6 @@ WHILE   :     'while';
 TINT    :      'int';
 TFLOAT  :    'float';
 
-ID      :   [a-zA-Z]+[a-zA-Z0-9_]? ;
 NEWLINE :   '\r'? '\n' ;
+ID      :   [a-zA-Z]+[a-zA-Z0-9_]? ;
 WS      :   [ \t]+ -> skip;
