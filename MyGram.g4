@@ -19,12 +19,13 @@ expr
     : expr op=('*'|'/') expr    # MulDiv
     | expr op=('+'|'-') expr    # AddSub
     | '-' expr                  # Neg
-    | ID                        # id
-    | INT                       # int
-    | FLOAT                     # float
     | '(' expr ')'              # parens
     | expr op=('>'|'<') expr    # MoreLess
     | expr op=('=='|'!=') expr  # EquN
+    |  STR      # str
+    | ID                        # id
+    | INT                       # int
+    | FLOAT                     # float
     ;
 
 declare_statment
@@ -34,6 +35,7 @@ declare_statment
 type
     : TINT                      # TypeInt
     | TFLOAT                    # TypeFloat
+    | TSTR                      # TypeStr
     ;
 
 if_statment
@@ -46,8 +48,7 @@ while_statment
                 ;
 
 
-FLOAT   :       '-'?[0-9]+'.'[0-9]+;
-INT     :       '-'?[0-9]+ ;
+
 MUL     :       '*';
 DIV     :       '/';
 ADD     :       '+';
@@ -60,14 +61,19 @@ NOT     :       '~';
 AND     :       '&';
 OR      :       '|';
 
-PRINT   :     'print';
-IF      :        'if';
-ELSE    :      'else';
-WHILE   :     'while';
+PRINT   :       'print';
+IF      :       'if';
+ELSE    :       'else';
+WHILE   :       'while';
 
-TINT    :      'int';
-TFLOAT  :    'float';
+TINT    :       'int';
+TFLOAT  :       'float';
+TSTR    :       'str';
+
+ID      :   [a-zA-Z]+[a-zA-Z0-9_]? ;
+FLOAT   :       '-'?[0-9]+'.'[0-9]+;
+INT     :       '-'?[0-9]+ ;
+STR     :       '"'.*?'"';
 
 NEWLINE :   '\r'? '\n' ;
-ID      :   [a-zA-Z]+[a-zA-Z0-9_]? ;
 WS      :   [ \t]+ -> skip;

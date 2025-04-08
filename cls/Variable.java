@@ -3,6 +3,7 @@ package cls;
 public class Variable{
     private Integer numberInt;
     private Float numberFloat;
+    private String str;
     /**
      * int = false
      * float = true
@@ -21,6 +22,9 @@ public class Variable{
     public Float getFloatNumber(){
         return numberFloat;
     }
+    public String getString(){
+        return str;
+    }
     public String getType(){
         return type;
     }
@@ -30,6 +34,9 @@ public class Variable{
     }
     public void setValue(Float value){
         numberFloat = value;
+    }
+    public void setValue(String string){
+        str = string;
     }
 
 

@@ -21,6 +21,8 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
             case "float":
                 var.setValue(value.getFloatNumber());
                 break;
+            case "str":
+                var.setValue(value.getString());
             default:
                 break;
         }
@@ -34,10 +36,16 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
         Variable value = visit(ctx.expr());
         switch (value.getType()){
             case "int":
+                System.out.println("Int type");
                 System.out.println(value.getIntNumber());
                 break;
             case "float":
+                System.out.println("Float type");
                 System.out.println(value.getFloatNumber());
+                break;
+            case "str":
+                System.out.println("String type: " + value.getType());
+                System.out.println(value.getString());
                 break;
             default:
                 System.out.println("Bad type");
@@ -165,6 +173,20 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
         // System.out.println("Type value: " + constVar.getType());
         return constVar;
     }
+    /**
+     * STR
+     */
+	@Override public Variable visitStr(MyGramParser.StrContext ctx) {
+        Variable constVar = new Variable("str");
+        constVar.setConst(true);
+        String str = ctx.STR().getText();
+        int len = str.length();
+        constVar.setValue(str.substring(1, len - 1));
+        // System.out.println("String = " + constVar.getString());
+        // System.out.println("float value: " + constVar.getFloatNumber());
+        // System.out.println("Type value: " + constVar.getType());
+        return constVar;
+    }
 
     /**
      * expr op=('>'|'<') expr
@@ -267,7 +289,7 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
      * Declare section
      * TINT
      * TFLOAT
-     * 
+     * TSTR
      * 
      * 
      * 
@@ -299,7 +321,14 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
         String type = ctx.TFLOAT().getText();
         // System.out.println("(float)Type is: " + type);
         return new Variable(type);
-
+    }
+    /**
+     * IFLOAT
+     */
+    @Override public Variable visitTypeStr(MyGramParser.TypeStrContext ctx){
+        String type = ctx.TSTR().getText();
+        // System.out.println("(float)Type is: " + type);
+        return new Variable(type);
     }
 
 
