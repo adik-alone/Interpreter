@@ -1,3 +1,5 @@
 str c
+str k
 c = "hello"
-print(c)
+k = " world!"
+print(c + k)

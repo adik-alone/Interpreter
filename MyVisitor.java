@@ -14,57 +14,61 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
         if (memory.containsKey(id)) var = memory.get(id);
         else return null;
         Variable value = visit(ctx.expr());
-        switch (value.getType()){
-            case "int":
-                var.setValue(value.getIntNumber());
-                break;
-            case "float":
-                var.setValue(value.getFloatNumber());
-                break;
-            case "str":
-                var.setValue(value.getString());
-            default:
-                break;
-        }
+        // switch (value.getType()){
+        //     case "int":
+        //         var.setValue(value.getIntNumber());
+        //         break;
+        //     case "float":
+        //         var.setValue(value.getFloatNumber());
+        //         break;
+        //     case "str":
+        //         var.setValue(value.getString());
+        //     default:
+        //         break;
+        // }
         // System.out.println("Type is: " + var.getType());
         // System.out.println("FloatValue is: " + var.getFloatNumber());
         // System.out.println("IntValue is: " + var.getIntNumber());
+        VariableUtils.assign(var, value);
         return var;
     }
     /** print_statment: 'print' '(' expr ')' NEWLINE */
 	@Override public Variable visitPrint_statment(MyGramParser.Print_statmentContext ctx) {
         Variable value = visit(ctx.expr());
-        switch (value.getType()){
-            case "int":
-                System.out.println("Int type");
-                System.out.println(value.getIntNumber());
-                break;
-            case "float":
-                System.out.println("Float type");
-                System.out.println(value.getFloatNumber());
-                break;
-            case "str":
-                System.out.println("String type: " + value.getType());
-                System.out.println(value.getString());
-                break;
-            default:
-                System.out.println("Bad type");
-        }
+        // switch (value.getType()){
+        //     case "int":
+        //         System.out.println("Int type");
+        //         System.out.println(value.getIntNumber());
+        //         break;
+        //     case "float":
+        //         System.out.println("Float type");
+        //         System.out.println(value.getFloatNumber());
+        //         break;
+        //     case "str":
+        //         System.out.println("String type: " + value.getType());
+        //         System.out.println(value.getString());
+        //         break;
+        //     default:
+        //         System.out.println("Bad type");
+        // }
+        VariableUtils.print(value);
         return null;
     }
     /** '-' expr */
 	@Override public Variable visitNeg(MyGramParser.NegContext ctx) {
         Variable var = visit(ctx.expr());
-        switch(var.getType()){
-            case "int":
-                var.setValue(-1 * var.getIntNumber());
-                break;
-            case "float":
-                var.setValue(-1 * var.getFloatNumber());
-                break;
-            default:
-                break;
-        }
+        // switch(var.getType()){
+        //     case "int":
+        //         var.setValue(-1 * var.getIntNumber());
+        //         break;
+        //     case "float":
+        //         var.setValue(-1 * var.getFloatNumber());
+        //         break;
+        //     default:
+        //         break;
+        // }
+        // return VariableUtils.neg(var);
+        VariableUtils.neg(var);
         return var;
     }
     /**
@@ -82,30 +86,31 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
         if (!left.getType().equals(right.getType())) return null;
         Variable result = new Variable(left.getType());
         if (ctx.op.getType() == MyGramParser.MUL){ 
-            switch(left.getType()){
-                case "int":
-                    result.setValue(left.getIntNumber() * right.getIntNumber());
-                    break;
-                case "float":
-                    result.setValue(left.getFloatNumber() * right.getFloatNumber());
-                    break;
-                default:
-                    result = null;
-                    break;
-            }
+            VariableUtils.operation(left, right, result, "*");
+            // switch(left.getType()){
+            //     case "int":
+            //         result.setValue(left.getIntNumber() * right.getIntNumber());
+            //         break;
+            //     case "float":
+            //         result.setValue(left.getFloatNumber() * right.getFloatNumber());
+            //         break;
+            //     default:
+            //         result = null;
+            //         break;
+            // }
         }else{
-            switch(left.getType()){
-                case "int":
-                    result.setValue(left.getIntNumber() / right.getIntNumber());
-                    break;
-                case "float":
-                    result.setValue(left.getFloatNumber() / right.getFloatNumber());
-                    break;
-                default:
-                    result = null;
-                    break;
-            }
-
+            VariableUtils.operation(left, right, result, "/");
+            // switch(left.getType()){
+            //     case "int":
+            //         result.setValue(left.getIntNumber() / right.getIntNumber());
+            //         break;
+            //     case "float":
+            //         result.setValue(left.getFloatNumber() / right.getFloatNumber());
+            //         break;
+            //     default:
+            //         result = null;
+            //         break;
+            // }
         }
         return result;
     }
@@ -115,32 +120,34 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
 	@Override public Variable visitAddSub(MyGramParser.AddSubContext ctx) {
         Variable left = visit(ctx.expr(0));
         Variable right = visit(ctx.expr(1));
-        if (!left.getType().equals(right.getType())) return null;
+        if (!left.getType().equals(right.getType())) return null; // place for error
         Variable result = new Variable(left.getType());
         if (ctx.op.getType() == MyGramParser.ADD){ 
-            switch(left.getType()){
-                case "int":
-                    result.setValue(left.getIntNumber() + right.getIntNumber());
-                    break;
-                case "float":
-                    result.setValue(left.getFloatNumber() + right.getFloatNumber());
-                    break;
-                default:
-                    result = null;
-                    break;
-            }
+            VariableUtils.operation(left, right, result, "+");
+            // switch(left.getType()){
+            //     case "int":
+            //         result.setValue(left.getIntNumber() + right.getIntNumber());
+            //         break;
+            //     case "float":
+            //         result.setValue(left.getFloatNumber() + right.getFloatNumber());
+            //         break;
+            //     default:
+            //         result = null;
+            //         break;
+            // }
         }else{
-            switch(left.getType()){
-                case "int":
-                    result.setValue(left.getIntNumber() - right.getIntNumber());
-                    break;
-                case "float":
-                    result.setValue(left.getFloatNumber() - right.getFloatNumber());
-                    break;
-                default:
-                    result = null;
-                    break;
-            }
+            VariableUtils.operation(left, right, result, "-");
+            // switch(left.getType()){
+            //     case "int":
+            //         result.setValue(left.getIntNumber() - right.getIntNumber());
+            //         break;
+            //     case "float":
+            //         result.setValue(left.getFloatNumber() - right.getFloatNumber());
+            //         break;
+            //     default:
+            //         result = null;
+            //         break;
+            // }
 
         }
         return result;
@@ -351,7 +358,11 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
             case "float":
                 if (condition.getFloatNumber() != 0) return visit(ctx.statments()); //?
                 return null;
+            case "str":
+                //place for error
+                return null;
             default:
+                //place for error
                 return null;
         }
     }
@@ -367,7 +378,11 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
             case "float":
                 if (condition.getFloatNumber() != 0) return visit(ctx.statments(0)); //?
                 return visit(ctx.statments(1));
+            case "str":
+                //place for error
+                return null;
             default:
+                //place for error
                 return null;
         }
     }
@@ -395,8 +410,12 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
                     return null;
                 }
                 break;
+            case "str":
+                //place for error
+                return null;
             default:
-                break;
+                //place for error
+                return null;
         }
         return visitWhileSt(ctx);
     }

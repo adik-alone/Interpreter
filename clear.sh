@@ -4,3 +4,4 @@ rm MyGram.interp
 rm MyGram.tokens
 rm MyGramLexer.interp
 rm MyGramLexer.tokens
+rm ./cls/*.class

@@ -1,14 +1,23 @@
 package cls;
 
 public class Variable{
+    /**
+     * field for different types
+     */
     private Integer numberInt;
     private Float numberFloat;
     private String str;
+
     /**
-     * int = false
-     * float = true
+     * type =
+     * "int"
+     * "float"
+     * "str"
      */
     private String type;
+    /**
+     * field for constants;
+     */
     private boolean constId;
 
     public Variable(String type){
@@ -29,6 +38,37 @@ public class Variable{
         return type;
     }
 
+    /**
+     * method for place value in target
+     */
+    public void getToSetValue(Variable target){
+        switch(this.type){
+            case "int":
+                target.setValue(numberInt);
+                break;
+            case "float":
+                target.setValue(numberFloat);
+                break;
+            case "str":
+                target.setValue(str);
+                break;
+            default:
+                break;
+        }
+    }
+    public Object getValue(){
+        switch(this.type){
+            case "int":
+                return numberInt;
+            case "float":
+                return numberFloat;
+            case "str":
+                return str;
+            default:
+                return null;
+        }
+    }
+
     public void setValue(Integer value){
         numberInt = value;
     }
@@ -38,7 +78,24 @@ public class Variable{
     public void setValue(String string){
         str = string;
     }
-
+    public void setValue(Variable var){
+        if(!var.getType().equals(type)){
+            // place for error
+        }
+        switch(this.type){
+            case "int":
+                this.setValue(var.getIntNumber());
+                break;
+            case "float":
+                this.setValue(var.getFloatNumber());
+                break;
+            case "str":
+                this.setValue(var.getString());
+                break;
+            default:
+                break;
+        }
+    }
 
     public boolean isConst(){
         return constId;
