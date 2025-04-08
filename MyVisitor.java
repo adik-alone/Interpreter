@@ -12,62 +12,25 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
         String id = ctx.ID().getText();
         Variable var;
         if (memory.containsKey(id)) var = memory.get(id);
-        else return null;
+        else throw new Error("Cannot find this identifier\n" +
+                                                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
         Variable value = visit(ctx.expr());
-        // switch (value.getType()){
-        //     case "int":
-        //         var.setValue(value.getIntNumber());
-        //         break;
-        //     case "float":
-        //         var.setValue(value.getFloatNumber());
-        //         break;
-        //     case "str":
-        //         var.setValue(value.getString());
-        //     default:
-        //         break;
-        // }
+        VariableUtils.assign(var, value);
         // System.out.println("Type is: " + var.getType());
         // System.out.println("FloatValue is: " + var.getFloatNumber());
         // System.out.println("IntValue is: " + var.getIntNumber());
-        VariableUtils.assign(var, value);
         return var;
     }
     /** print_statment: 'print' '(' expr ')' NEWLINE */
 	@Override public Variable visitPrint_statment(MyGramParser.Print_statmentContext ctx) {
         Variable value = visit(ctx.expr());
-        // switch (value.getType()){
-        //     case "int":
-        //         System.out.println("Int type");
-        //         System.out.println(value.getIntNumber());
-        //         break;
-        //     case "float":
-        //         System.out.println("Float type");
-        //         System.out.println(value.getFloatNumber());
-        //         break;
-        //     case "str":
-        //         System.out.println("String type: " + value.getType());
-        //         System.out.println(value.getString());
-        //         break;
-        //     default:
-        //         System.out.println("Bad type");
-        // }
         VariableUtils.print(value);
         return null;
     }
     /** '-' expr */
 	@Override public Variable visitNeg(MyGramParser.NegContext ctx) {
         Variable var = visit(ctx.expr());
-        // switch(var.getType()){
-        //     case "int":
-        //         var.setValue(-1 * var.getIntNumber());
-        //         break;
-        //     case "float":
-        //         var.setValue(-1 * var.getFloatNumber());
-        //         break;
-        //     default:
-        //         break;
-        // }
-        // return VariableUtils.neg(var);
         VariableUtils.neg(var);
         return var;
     }
@@ -83,34 +46,14 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
 	@Override public Variable visitMulDiv(MyGramParser.MulDivContext ctx) {
         Variable left = visit(ctx.expr(0));
         Variable right = visit(ctx.expr(1));
-        if (!left.getType().equals(right.getType())) return null;
+        if (!left.getType().equals(right.getType())) throw new Error("You can't do this operation whit different type of operand" +
+                                                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
         Variable result = new Variable(left.getType());
         if (ctx.op.getType() == MyGramParser.MUL){ 
             VariableUtils.operation(left, right, result, "*");
-            // switch(left.getType()){
-            //     case "int":
-            //         result.setValue(left.getIntNumber() * right.getIntNumber());
-            //         break;
-            //     case "float":
-            //         result.setValue(left.getFloatNumber() * right.getFloatNumber());
-            //         break;
-            //     default:
-            //         result = null;
-            //         break;
-            // }
         }else{
             VariableUtils.operation(left, right, result, "/");
-            // switch(left.getType()){
-            //     case "int":
-            //         result.setValue(left.getIntNumber() / right.getIntNumber());
-            //         break;
-            //     case "float":
-            //         result.setValue(left.getFloatNumber() / right.getFloatNumber());
-            //         break;
-            //     default:
-            //         result = null;
-            //         break;
-            // }
         }
         return result;
     }
@@ -120,35 +63,15 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
 	@Override public Variable visitAddSub(MyGramParser.AddSubContext ctx) {
         Variable left = visit(ctx.expr(0));
         Variable right = visit(ctx.expr(1));
-        if (!left.getType().equals(right.getType())) return null; // place for error
+        if (!left.getType().equals(right.getType())) throw new Error("You can't do this operation whit different type of operand\n" +
+                                                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                                                    // ctx.token() + "\n" +
+                                                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
         Variable result = new Variable(left.getType());
         if (ctx.op.getType() == MyGramParser.ADD){ 
             VariableUtils.operation(left, right, result, "+");
-            // switch(left.getType()){
-            //     case "int":
-            //         result.setValue(left.getIntNumber() + right.getIntNumber());
-            //         break;
-            //     case "float":
-            //         result.setValue(left.getFloatNumber() + right.getFloatNumber());
-            //         break;
-            //     default:
-            //         result = null;
-            //         break;
-            // }
         }else{
             VariableUtils.operation(left, right, result, "-");
-            // switch(left.getType()){
-            //     case "int":
-            //         result.setValue(left.getIntNumber() - right.getIntNumber());
-            //         break;
-            //     case "float":
-            //         result.setValue(left.getFloatNumber() - right.getFloatNumber());
-            //         break;
-            //     default:
-            //         result = null;
-            //         break;
-            // }
-
         }
         return result;
     }
@@ -158,7 +81,9 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
 	@Override public Variable visitId(MyGramParser.IdContext ctx) {
         String id = ctx.ID().getText();
         if (memory.containsKey(id)) return memory.get(id);
-        return null;
+        throw new Error("Cannot find this identifier" +
+                        "poblem with token: " + ctx.getStart().getText() + "\n" +
+                        "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
     }
 	/**
      * INT
@@ -201,7 +126,9 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
     @Override public Variable visitMoreLess(MyGramParser.MoreLessContext ctx){
         Variable left = visit(ctx.expr(0));
         Variable right = visit(ctx.expr(1));
-        if(!left.getType().equals(right.getType())) return null;
+        if(!left.getType().equals(right.getType()))  throw new Error("You can't do this operation whit different type of operand" +
+                                                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
         Variable result = new Variable(left.getType());
         if (ctx.op.getType() == MyGramParser.MORES){ 
             switch(left.getType()){
@@ -217,9 +144,14 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
                     else
                         result.setValue(0f);
                     break;
+                case "str":
+                    throw new Error("You cannot use this operation with str"+
+                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
                 default:
-                    result = null;
-                    break;
+                    throw new Error("Unknown type" +
+                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
             }
         }else{
             switch(left.getType()){
@@ -235,9 +167,14 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
                     else
                         result.setValue(0f);
                     break;
+                case "str":
+                    throw new Error("You cannot use this operation with str" +
+                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
                 default:
-                    result = null;
-                    break;
+                    throw new Error("Unknown type" +
+                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
             }
         }
         return result;
@@ -249,7 +186,9 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
     @Override public Variable visitEquN(MyGramParser.EquNContext ctx){
         Variable left = visit(ctx.expr(0));
         Variable right = visit(ctx.expr(1));
-        if(!left.getType().equals(right.getType())) return null;
+        if(!left.getType().equals(right.getType())) throw new Error("You can't do this operation whit different type of operand" +
+                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
         Variable result = new Variable(left.getType());
         if (ctx.op.getType() == MyGramParser.EQU){ 
             switch(left.getType()){
@@ -265,9 +204,14 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
                     else
                         result.setValue(0f);
                     break;
+                case "str":
+                    throw new Error("You cannot use this operation with str" +
+                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
                 default:
-                    result = null;
-                    break;
+                    throw new Error("Unknown type" +
+                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
             }
         }else{
             switch(left.getType()){
@@ -283,9 +227,14 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
                     else
                         result.setValue(0f);
                     break;
+                case "str":
+                    throw new Error("You cannot use this operation with str" +
+                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
                 default:
-                    result = null;
-                    break;
+                    throw new Error("Unknown type" +
+                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
             }
         }
         return result;
@@ -359,11 +308,15 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
                 if (condition.getFloatNumber() != 0) return visit(ctx.statments()); //?
                 return null;
             case "str":
+                throw new Error("You cannot use str in condition" +
+                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
                 //place for error
-                return null;
             default:
+                throw new Error("Unknown type" +
+                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
                 //place for error
-                return null;
         }
     }
 	/**
@@ -379,11 +332,14 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
                 if (condition.getFloatNumber() != 0) return visit(ctx.statments(0)); //?
                 return visit(ctx.statments(1));
             case "str":
-                //place for error
-                return null;
+                throw new Error("You cannot use str in condition" +
+                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
             default:
+                throw new Error("Unknown type" +
+                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
                 //place for error
-                return null;
         }
     }
     /**
@@ -412,10 +368,14 @@ public class MyVisitor extends MyGramBaseVisitor<Variable> {
                 break;
             case "str":
                 //place for error
-                return null;
+                throw new Error("You cannot use str in condition" + 
+                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
             default:
+                throw new Error("Unknown type" + 
+                                    "poblem with token: " + ctx.getStart().getText() + "\n" +
+                                    "in line: " + ctx.getStart().getLine() +":" + ctx.getStart().getCharPositionInLine()  + "\n"); // place for error
                 //place for error
-                return null;
         }
         return visitWhileSt(ctx);
     }

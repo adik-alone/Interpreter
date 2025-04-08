@@ -35,10 +35,17 @@ public class VariableUtils{
                 divVar(op1, op2, result);
                 break;
             default:
-                break;
+                throw new Error("Unknown operation");
         }
         // return result;
     }
+
+    // public static boolean compareType(Variable op1, Variable op2) throws TypeException{
+    //     if(op1.getType().equals(op2.getType())){
+    //         return true;
+    //     }
+    //     throw new TypeException("wrong type");
+    // }
 
 
 
@@ -57,8 +64,7 @@ public class VariableUtils{
                 result.setValue(op1.getString() + op2.getString());
                 break;
             default:
-                result = null;
-                break;
+                throw new Error("Unknown type");
         }
     }
     private static void subVar(Variable op1, Variable op2, Variable result){
@@ -70,11 +76,10 @@ public class VariableUtils{
                 result.setValue(op1.getFloatNumber() - op2.getFloatNumber());
                 break;
             case "str":
+                throw new Error("Str does not support this operation");
                 // place for error
-                break;
             default:
-                result = null;
-                break;
+                throw new Error("Unknown type");
         }
     }
     private static void mulVar(Variable op1, Variable op2, Variable result){
@@ -86,11 +91,10 @@ public class VariableUtils{
                 result.setValue(op1.getFloatNumber() * op2.getFloatNumber());
                 break;
             case "str":
+                throw new Error("Str does not support this operation");
                 // place for error
-                break;
             default:
-                result = null;
-                break;
+                throw new Error("Unknown type");
         }
     }
     private static void divVar(Variable op1, Variable op2, Variable result){
@@ -102,11 +106,10 @@ public class VariableUtils{
                 result.setValue(op1.getFloatNumber() / op2.getFloatNumber());
                 break;
             case "str":
+                throw new Error("Str does not support this operation");
                 // place for error
-                break;
             default:
-                result = null;
-                break;
+                throw new Error("Unknown type");
         }
     }
 }
